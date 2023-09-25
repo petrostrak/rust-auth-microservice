@@ -39,9 +39,12 @@ impl Users for UsersImpl {
             .map_err(|e| format!("Failed to hash password.\n{e:?}"))?
             .to_string();
 
-        let user: User = User { user_uuid: Uuid::new_v4().to_string(),  username,  password }; 
+        let user: User = User {
+            user_uuid: Uuid::new_v4().to_string(),
+            username,
+            password,
+        };
 
-        // TODO: Add user to `username_to_user` and `uuid_to_user`.
         self.username_to_user.insert(username, user.clone());
         self.uuid_to_user.insert(uuid, user);
 
@@ -51,7 +54,7 @@ impl Users for UsersImpl {
     fn get_user_uuid(&self, username: String, password: String) -> Option<String> {
         let user: &User = todo!(); // Retrieve `User` or return `None` is user can't be found.
 
-        // Get user's password as `PasswordHash` instance. 
+        // Get user's password as `PasswordHash` instance.
         let hashed_password = user.password.clone();
         let parsed_hash = PasswordHash::new(&hashed_password).ok()?;
 
