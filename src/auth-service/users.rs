@@ -28,7 +28,9 @@ pub struct UsersImpl {
 
 impl Users for UsersImpl {
     fn create_user(&mut self, username: String, password: String) -> Result<(), String> {
-        // TODO: Check if username already exist. If so return an error.
+        if self.username_to_user.contains_key(&username) {
+            return Err("Unable to create user, username already exists"a.to_string());
+        }
 
         let salt = SaltString::generate(&mut OsRng);
 
@@ -37,9 +39,11 @@ impl Users for UsersImpl {
             .map_err(|e| format!("Failed to hash password.\n{e:?}"))?
             .to_string();
 
-        let user: User = todo!(); // Create new user with unique uuid and hashed password.
+        let user: User = User { user_uuid: Uuid::new_v4().to_string(),  username,  password }; 
 
         // TODO: Add user to `username_to_user` and `uuid_to_user`.
+        self.username_to_user.insert(username, user.clone());
+        self.uuid_to_user.insert(uuid, user);
 
         Ok(())
     }
