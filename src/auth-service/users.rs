@@ -52,7 +52,7 @@ impl Users for UsersImpl {
     }
 
     fn get_user_uuid(&self, username: String, password: String) -> Option<String> {
-        let user: &User = todo!(); // Retrieve `User` or return `None` is user can't be found.
+        let user: &User = self.username_to_user.get(&username)?;
 
         // Get user's password as `PasswordHash` instance.
         let hashed_password = user.password.clone();
@@ -61,7 +61,10 @@ impl Users for UsersImpl {
         // Verify passed in password matches user's password.
         let result = Pbkdf2.verify_password(password.as_bytes(), &parsed_hash);
 
-        // TODO: If the username and password passed in matches the user's username and password return the user's uuid.
+        // If the username and password passed in matches the user's username and password return the user's uuid.
+        if user.username == username && result.is_ok() {
+            return Some(user.user_uuid.clone());
+        }
 
         None
     }
