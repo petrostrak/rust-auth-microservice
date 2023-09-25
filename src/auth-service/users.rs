@@ -29,7 +29,7 @@ pub struct UsersImpl {
 impl Users for UsersImpl {
     fn create_user(&mut self, username: String, password: String) -> Result<(), String> {
         if self.username_to_user.contains_key(&username) {
-            return Err("Unable to create user, username already exists"a.to_string());
+            return Err("Unable to create user, username already exists".to_string());
         }
 
         let salt = SaltString::generate(&mut OsRng);
@@ -41,12 +41,12 @@ impl Users for UsersImpl {
 
         let user: User = User {
             user_uuid: Uuid::new_v4().to_string(),
-            username,
+            username: username.clone(),
             password,
         };
 
         self.username_to_user.insert(username, user.clone());
-        self.uuid_to_user.insert(uuid, user);
+        self.uuid_to_user.insert(user.user_uuid.clone(), user);
 
         Ok(())
     }
