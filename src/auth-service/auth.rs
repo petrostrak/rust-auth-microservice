@@ -51,8 +51,6 @@ impl Auth for AuthService {
             .expect("lock should not be poisoned")
             .get_user_uuid(req.username, req.password);
 
-        // Match on `result`. If `result` is `None` return a SignInResponse with a the `status_code` set to `Failure`
-        // and `user_uuid`/`session_token` set to empty strings.
         let user_uuid: String = match result {
             Some(uuid) => uuid,
             None => {
@@ -89,15 +87,27 @@ impl Auth for AuthService {
 
         let req = request.into_inner();
 
-        let result: Result<(), String> = todo!(); // Create a new user through `users_service`. Panic if the lock is poisoned.
+        let result: Result<(), String> = self
+            .users_service
+            .lock()
+            .expect("lock should not be poisoned")
+            .create_user(req.username, req.password);
 
         // TODO: Return a `SignUpResponse` with the appropriate `status_code` based on `result`.
         match result {
             Ok(_) => {
-                todo!()
+                let reply = SignUpResponse {
+                    status_code: StatusCode::Success.into(),
+                };
+
+                Ok(Response::new(reply))
             }
             Err(_) => {
-                todo!()
+                let reply = SignUpResponse {
+                    status_code: StatusCode::Failure.into(),
+                };
+
+                Ok(Response::new(reply))
             }
         }
     }
