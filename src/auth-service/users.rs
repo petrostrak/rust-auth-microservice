@@ -42,7 +42,7 @@ impl Users for UsersImpl {
         let user: User = User {
             user_uuid: Uuid::new_v4().to_string(),
             username: username.clone(),
-            password,
+            password: hashed_password,
         };
 
         self.username_to_user.insert(username, user.clone());
@@ -72,7 +72,7 @@ impl Users for UsersImpl {
     fn delete_user(&mut self, user_uuid: String) {
         if let Some(user) = self.uuid_to_user.get(&user_uuid) {
             let user_uuid = user.user_uuid.clone();
-            self.username_to_user.remove(&user.user_uuid);
+            self.username_to_user.remove(&user.username);
             self.uuid_to_user.remove(&user_uuid);
         }
     }
